@@ -12,7 +12,7 @@ module OmniAuth
              token_url: 'https://api.producthunt.com/v2/oauth/token'
 
       uid {
-        raw_info['id']
+        raw_info['user']['id']
       }
 
       info do
