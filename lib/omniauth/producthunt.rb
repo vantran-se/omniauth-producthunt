@@ -7,9 +7,9 @@ module OmniAuth
       option :name, 'producthunt'
 
       option :client_options,
-             site: 'https://api.producthunt.com/v1/',
-             authorize_url: 'https://api.producthunt.com/v1/oauth/authorize',
-             token_url: 'https://api.producthunt.com/v1/oauth/token'
+             site: 'https://api.producthunt.com/v2/',
+             authorize_url: 'https://api.producthunt.com/v2/oauth/authorize',
+             token_url: 'https://api.producthunt.com/v2/oauth/token'
 
       uid { raw_info['user']['id'] }
 
