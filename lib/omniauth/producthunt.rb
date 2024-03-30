@@ -7,19 +7,22 @@ module OmniAuth
       option :name, 'producthunt'
 
       option :client_options,
-             site: 'https://api.producthunt.com/v2/',
+             site: 'https://api.producthunt.com/v2/api',
              authorize_url: 'https://api.producthunt.com/v2/oauth/authorize',
              token_url: 'https://api.producthunt.com/v2/oauth/token'
 
-      uid { raw_info['user']['id'] }
+      uid {
+        raw_info['user']['id']
+      }
 
       info do
         user_info = raw_info['user']
         {
           name: user_info['name'],
-          username: user_info['username'],
-          email: user_info['email'],
-          avatar: user_info['image_url']['original']
+          email: nil,
+          nickname: user_info['username'],
+          image: user_info['profileImage'],
+          twitter_username: user_info['twitterUsername']
         }
       end
 
@@ -28,8 +31,6 @@ module OmniAuth
       end
 
       def authorize_params
-        # for now override the scope here so that we can
-        # call /v1/me and get current users information
         super.tap { |p| p[:scope] = 'public private' }
       end
 
@@ -39,7 +40,13 @@ module OmniAuth
       end
 
       def raw_info
-        @raw_info ||= access_token.get('me').parsed
+        # graphql query to get user information
+        request_body = {
+          body: {
+            query: "query { viewer { user { id name username profileImage twitterUsername } } }"
+          }
+        }
+        @raw_info ||= access_token.post('graphql', request_body).parsed.dig('data', 'viewer')
       end
     end
   end
